@@ -2,7 +2,7 @@ module ActiveUMS
   class Relation
     include Enumerable
 
-    attr_accessor :conditions, :klass
+    attr_accessor :conditions, :klass, :path
 
     delegate :each,
              :first,
@@ -18,6 +18,7 @@ module ActiveUMS
       @klass      ||= options[:klass]
       @collection ||= options.fetch(:collection, [])
       @conditions ||= options.fetch(:conditions, {})
+      @path       ||= options.fetch(:path, klass.collection_path)
     end
 
     def find_by(conditions = {})
@@ -39,7 +40,7 @@ module ActiveUMS
     end
 
     def collection
-      HTTP.get(klass.collection_path, params: conditions)
+      HTTP.get(path, params: conditions)
           .map { |attributes| klass.persist(attributes) }
     end
 

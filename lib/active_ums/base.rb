@@ -156,6 +156,15 @@ module ActiveUMS
         end
       end
 
+      # @param name [Symbol]
+      def path(name)
+        define_singleton_method(name) do
+          where.tap do |relation|
+            relation.path = File.join(collection_path, name.to_s)
+          end
+        end
+      end
+
       # Same as `new` but for persisted records
       # @param attributes [Hash]
       # @return [ActiveUMS::Base]
