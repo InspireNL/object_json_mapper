@@ -11,6 +11,7 @@ module ActiveUMS
              :select!,
              :to_ary,
              :+,
+             :inspect,
              to: :collection
 
     def initialize(options = {})
@@ -35,10 +36,6 @@ module ActiveUMS
 
     def where(conditions = {})
       clone.tap { |relation| relation.conditions.merge!(conditions) }
-    end
-
-    def inspect
-      collection.inspect
     end
 
     def collection

@@ -146,6 +146,16 @@ module ActiveUMS
         end
       end
 
+      # @param name [Symbol]
+      # @param block [Proc]
+      def scope(name, block)
+        define_singleton_method(name) do
+          where.tap do |relation|
+            relation.instance_exec(&block)
+          end
+        end
+      end
+
       # Same as `new` but for persisted records
       # @param attributes [Hash]
       # @return [ActiveUMS::Base]
