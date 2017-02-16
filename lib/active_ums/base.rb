@@ -15,11 +15,11 @@ module ActiveUMS
 
     define_model_callbacks :save, :create, :update, :destroy, :validation
 
-    delegate :slice, :[]=, to: :attributes
+    delegate :slice, :[], :[]=, to: :attributes
 
     def initialize(attributes = {})
       self.attributes = attributes
-      self.persisted = false
+      @persisted = false
     end
 
     alias persisted? persisted
@@ -34,9 +34,9 @@ module ActiveUMS
 
     # @return [ActiveUMS::Base]
     def reload
-      self.attributes = HTTP.get(element_path) if reloadable?
-
-      self
+      tap do |base|
+        base.attributes = HTTP.get(element_path) if reloadable?
+      end
     end
 
     def reloadable?
@@ -47,15 +47,10 @@ module ActiveUMS
       @attributes = HashWithIndifferentAccess.new(value)
     end
 
-    def [](name)
-      public_send(name)
-    end
-
     # TODO: remove (?)
     def method_missing(method_name, *args, &block)
-      super(method_name, *args, &block) unless respond_to_missing?(method_name)
-
-      attributes.fetch(method_name)
+      attributes.fetch(method_name) if respond_to_missing?(method_name)
+      super
     end
 
     # TODO: remove (?)
@@ -70,10 +65,10 @@ module ActiveUMS
       response = RestClient.post(self.class.collection_path, attributes)
 
       result = if response.headers[:location]
-        HTTP.get(response.headers[:location])
-      else
-        HTTP.parse_json(response.body)
-      end
+                 HTTP.get(response.headers[:location])
+               else
+                 HTTP.parse_json(response.body)
+               end
 
       persist
       errors.clear
@@ -83,9 +78,7 @@ module ActiveUMS
     rescue RestClient::ExceptionWithResponse => e
       raise e unless e.response.code == 422
 
-      load_errors(
-        HTTP.parse_json(e.response.body)
-      )
+      load_errors(HTTP.parse_json(e.response.body))
 
       false
     ensure
@@ -107,9 +100,7 @@ module ActiveUMS
     rescue RestClient::ExceptionWithResponse => e
       raise e unless e.response.code == 422
 
-      load_errors(
-        HTTP.parse_json(e.response.body)
-      )
+      load_errors(HTTP.parse_json(e.response.body))
 
       false
     end
@@ -134,14 +125,14 @@ module ActiveUMS
       # @param type [Dry::Types::Constructor]
       # @param default [Proc]
       def attribute(name, type: nil, default: nil)
-        define_method name do
+        define_method(name) do
           return default.call if attributes.exclude?(name) && default
           return type.call(attributes[name]) if type
 
           attributes[name]
         end
 
-        define_method "#{name}=" do |value|
+        define_method("#{name}=") do |value|
           attributes[name] = value
         end
       end
@@ -169,9 +160,9 @@ module ActiveUMS
       # @param attributes [Hash]
       # @return [ActiveUMS::Base]
       def persist(attributes = {})
-        instance = new(attributes)
-        instance.persisted = true
-        instance
+        new(attributes).tap do |base|
+          base.persisted = true
+        end
       end
 
       # @param conditions [Hash]
@@ -218,13 +209,9 @@ module ActiveUMS
       rescue RestClient::ExceptionWithResponse => e
         raise e unless e.response.code == 422
 
-        result = new
-
-        result.load_errors(
-          HTTP.parse_json(e.response.body)
-        )
-
-        result
+        new.tap do |base|
+          base.load_errors(HTTP.parse_json(e.response.body))
+        end
       end
     end
   end
