@@ -2,7 +2,7 @@ module ActiveUMS
   class Relation
     include Enumerable
 
-    attr_reader :collection
+    attr_accessor :conditions, :klass
 
     delegate :each,
              :first,
@@ -13,8 +13,10 @@ module ActiveUMS
              :+,
              to: :collection
 
-    def initialize(collection)
-      @collection = collection
+    def initialize(options = {})
+      @klass      ||= options[:klass]
+      @collection ||= options.fetch(:collection, [])
+      @conditions ||= options.fetch(:conditions, {})
     end
 
     def find_by(conditions = {})
@@ -29,6 +31,19 @@ module ActiveUMS
 
     def exists?(id)
       find(id).present?
+    end
+
+    def where(conditions = {})
+      clone.tap { |relation| relation.conditions.merge!(conditions) }
+    end
+
+    def inspect
+      collection.inspect
+    end
+
+    def collection
+      HTTP.get(klass.collection_path, params: conditions)
+          .map { |attributes| klass.persist(attributes) }
     end
 
     # Find and return relation of local records by `eid`

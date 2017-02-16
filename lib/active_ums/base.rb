@@ -34,7 +34,7 @@ module ActiveUMS
 
     # @return [ActiveUMS::Base]
     def reload
-      self.attributes = self.class.get(element_path) if reloadable?
+      self.attributes = HTTP.get(element_path) if reloadable?
 
       self
     end
@@ -70,9 +70,9 @@ module ActiveUMS
       response = RestClient.post(self.class.collection_path, attributes)
 
       result = if response.headers[:location]
-        self.class.get(response.headers[:location])
+        HTTP.get(response.headers[:location])
       else
-        self.class.parse_json(response.body)
+        HTTP.parse_json(response.body)
       end
 
       persist
@@ -84,7 +84,7 @@ module ActiveUMS
       raise e unless e.response.code == 422
 
       load_errors(
-        self.class.parse_json(e.response.body)
+        HTTP.parse_json(e.response.body)
       )
 
       false
@@ -108,7 +108,7 @@ module ActiveUMS
       raise e unless e.response.code == 422
 
       load_errors(
-        self.class.parse_json(e.response.body)
+        HTTP.parse_json(e.response.body)
       )
 
       false
@@ -158,15 +158,13 @@ module ActiveUMS
       # @param conditions [Hash]
       # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
       def where(conditions = {})
-        result = get(collection_path, params: conditions)
-
-        ActiveUMS::Wrapper.to_relation(result, self)
+        Relation.new(klass: self).where(conditions)
       end
 
       # @param id [Integer]
       # @return [ActiveUMS::Base] current model instance
       def find(id)
-        result = get(element_path(id))
+        result = HTTP.get(element_path(id))
 
         persist(result)
       rescue RestClient::ExceptionWithResponse
@@ -192,10 +190,10 @@ module ActiveUMS
         response = RestClient.post(collection_path, params)
 
         result = if response.headers[:location]
-          get(response.headers[:location])
-        else
-          parse_json(response.body)
-        end
+                   HTTP.get(response.headers[:location])
+                 else
+                   HTTP.parse_json(response.body)
+                 end
 
         persist(result)
       rescue RestClient::ExceptionWithResponse => e
@@ -204,25 +202,10 @@ module ActiveUMS
         result = new
 
         result.load_errors(
-          parse_json(e.response.body)
+          HTTP.parse_json(e.response.body)
         )
 
         result
-      end
-
-      # @param url [String] path to resource
-      # @param params [Hash]
-      # @return [Hash] attributes for current model instance
-      def get(url, params = {})
-        response = RestClient.get(url, params)
-
-        parse_json(response.body)
-      end
-
-      def parse_json(json)
-        JSON.parse(json, symbolize_names: true)
-      rescue JSON::ParserError
-        {}
       end
     end
   end
