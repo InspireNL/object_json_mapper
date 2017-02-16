@@ -4,16 +4,11 @@ module ActiveUMS
       # @param object [ActiveUMS::Base]
       # @return [ActiveUMS::Relation]
       def call(object)
-        Wrapper.to_relation(
-          object.class.get(
-            object.class.association_path(
-              object.to_param,
-              endpoint.to_s.underscore.pluralize
-            ),
-            params: params
-          ),
-          class_name
-        )
+        class_name.classify.constantize.where.tap do |relation|
+          relation.path = object.association_path(
+            endpoint.to_s.underscore.pluralize
+          )
+        end
       end
     end
   end
