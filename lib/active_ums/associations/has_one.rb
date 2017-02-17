@@ -6,7 +6,7 @@ module ActiveUMS
       def call(object)
         attributes = HTTP.get(object.association_path(endpoint), params)
 
-        class_name.classify.constantize.new(attributes)
+        class_name.classify.constantize.persist(attributes)
       end
     end
   end
