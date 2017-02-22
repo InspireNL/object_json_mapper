@@ -10,8 +10,15 @@ module ActiveUMS
     def load_errors(messages)
       errors.clear
 
-      messages.each do |key, value|
-        errors.add(key.to_sym, value.first)
+      messages.each do |key, values|
+        values.each do |value|
+          case value
+          when String
+            errors.add(key, value)
+          when Hash
+            errors.add(key, value[:error], value.except(:error))
+          end
+        end
       end
     end
 

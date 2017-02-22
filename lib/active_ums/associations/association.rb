@@ -12,10 +12,10 @@ module ActiveUMS
       # @option options [Symbol] :endpoint
       # @option options [Hash] :params
       def initialize(name, options = {})
-        @name = name
-        @class_name = options.fetch(:class_name, name)
-        @endpoint = options.fetch(:endpoint, name)
-        @params = options.fetch(:params, name)
+        @name       = name
+        @class_name = options.fetch(:class_name, name.to_s)
+        @endpoint   = options.fetch(:endpoint, name.to_s)
+        @params     = options.fetch(:params, {})
       end
 
       def call(*)

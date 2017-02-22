@@ -1,5 +1,6 @@
 require 'active_model'
 require 'rest-client'
+require 'json'
 
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/enumerable'
@@ -13,11 +14,11 @@ require 'active_ums/associations/registry'
 require 'active_ums/associations'
 require 'active_ums/conversion'
 require 'active_ums/errors'
+require 'active_ums/http'
 require 'active_ums/local'
-require 'active_ums/relation'
 require 'active_ums/routes'
-require 'active_ums/wrapper'
 
+require 'active_ums/relation'
 require 'active_ums/base'
 
 module ActiveUMS

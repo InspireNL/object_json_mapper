@@ -10,6 +10,8 @@ RSpec.configure do |config|
   config.before(:each) do
     class User < ActiveUMS::Base
       attribute :id
+      attribute :email
+      attribute :password
     end
   end
 
