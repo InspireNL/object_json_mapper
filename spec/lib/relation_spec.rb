@@ -86,4 +86,35 @@ describe ActiveUMS::Relation do
       end
     end
   end
+
+  describe '#pluck' do
+    before do
+      stub_request(:get, 'http://localhost:3000/users')
+        .to_return(body:
+          [
+            { id: 1, email: 'first@example.com' },
+            { id: 2, email: 'second@example.com' }
+          ].to_json
+        )
+    end
+
+    let(:users) { User.all }
+
+    context 'with single attribute' do
+      it 'returns array' do
+        expect(users.pluck(:id)).to match_array([1, 2])
+      end
+    end
+
+    context 'with multiple attributes' do
+      it 'returns array of arrays' do
+        expect(users.pluck(:id, :email)).to match_array(
+          [
+            [1, 'first@example.com'],
+            [2, 'second@example.com']
+          ]
+        )
+      end
+    end
+  end
 end

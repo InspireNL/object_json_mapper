@@ -152,3 +152,11 @@ end
 User.confirmed.where(name: 'Name')
 # => GET http://localhost:3000/users/confirmed?name=Name
 ```
+
+## Pluck
+
+```ruby
+User.where(published: true).pluck(:id, :email)
+# => GET http://localhost:3000/users?published=true
+# => [[1, 'first@example.com', [2, 'second@example.com']]
+

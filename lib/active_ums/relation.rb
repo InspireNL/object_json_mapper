@@ -5,6 +5,7 @@ module ActiveUMS
     attr_accessor :conditions, :klass, :path
 
     delegate :each,
+             :map,
              :first,
              :last,
              :empty?,
@@ -37,6 +38,12 @@ module ActiveUMS
 
     def where(conditions = {})
       clone.tap { |relation| relation.conditions.merge!(conditions) }
+    end
+
+    # @return [Array,Array<Array>]
+    def pluck(*attributes)
+      map { |record| record.slice(*attributes).values }
+        .tap { |result| result.flatten! if attributes.size == 1 }
     end
 
     def collection
