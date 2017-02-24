@@ -47,6 +47,9 @@ User.find(1)
 ```ruby
 User.where(id: 1)
 # => GET http://localhost:3000/users?id=1
+
+User.where(id: 1).where(name: 'Name')
+# => GET http://localhost:3000/users?id=1&name=Name
 ```
 
 ### Create
@@ -124,22 +127,25 @@ Post.find(1).image
 # => GET http://localhost:3000/posts/1/image
 ```
 
-## Chaining
-
-```ruby
-User.where(id: 1).where(name: 'Name')
-# => GET http://localhost:3000/users?id=1&name=Name
-```
-
 ## Scopes
 
 ```ruby
 class User < ActiveUMS::Base
   scope :published, -> { where(published: true) }
+  scope :active, -> { where(active: true) }
 end
 
 User.published
 # => GET http://localhost:3000/users?published=true
+
+User.published.active
+# => GET http://localhost:3000/users?published=true&active=true
+
+User.published.where(active: true)
+# => GET http://localhost:3000/users?published=true&active=true
+
+User.where(active: true).published
+# => GET http://localhost:3000/users?active=true&published=true
 ```
 
 ## Path
@@ -159,4 +165,4 @@ User.confirmed.where(name: 'Name')
 User.where(published: true).pluck(:id, :email)
 # => GET http://localhost:3000/users?published=true
 # => [[1, 'first@example.com', [2, 'second@example.com']]
-
+```

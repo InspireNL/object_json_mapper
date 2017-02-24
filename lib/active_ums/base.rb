@@ -121,6 +121,19 @@ module ActiveUMS
     end
 
     class << self
+      attr_accessor :associations, :relation
+
+      def inherited(base)
+        base.associations = Associations::Registry.new
+        base.relation     = Relation.new(klass: base)
+      end
+
+      def clear_relation
+        relation.clone.tap do |cloned|
+          cloned.conditions = relation.conditions.clone
+        end
+      end
+
       # @param name [Symbol]
       # @param type [Dry::Types::Constructor]
       # @param default [Proc]
@@ -141,9 +154,11 @@ module ActiveUMS
       # @param block [Proc]
       def scope(name, block)
         define_singleton_method(name) do
-          where.tap do |relation|
-            relation.instance_exec(&block)
-          end
+          clear_relation.instance_exec(&block)
+        end
+
+        relation.define_singleton_method(name) do
+          instance_exec(&block)
         end
       end
 
@@ -168,7 +183,7 @@ module ActiveUMS
       # @param conditions [Hash]
       # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
       def where(conditions = {})
-        Relation.new(klass: self).where(conditions)
+        relation.where(conditions)
       end
 
       # @param id [Integer]

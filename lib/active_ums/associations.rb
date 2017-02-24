@@ -5,12 +5,6 @@ module ActiveUMS
     end
 
     module ClassMethods
-      attr_accessor :associations
-
-      def inherited(base)
-        base.associations = Registry.new
-      end
-
       # rubocop:disable Style/PredicateName
       #
       # @param association_name [Symbol]
