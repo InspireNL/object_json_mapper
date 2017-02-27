@@ -101,4 +101,28 @@ describe ActiveUMS::Base do
       it { expect(subject.conditions).to eq(id: 1, active: true) }
     end
   end
+
+  describe '#method_missing' do
+    let!(:user) { User.persist(id: 1, name: 'Name') }
+
+    context 'if key exists' do
+      context 'and defined' do
+        it 'returns attribute value by key' do
+          expect(user.id).to eq(1)
+        end
+      end
+
+      context 'and not defined' do
+        it 'returns attribute value by key' do
+          expect(user.name).to eq('Name')
+        end
+      end
+    end
+
+    context 'if key does not exists' do
+      it 'raises exception' do
+        expect { user.false_key }.to raise_error(NoMethodError)
+      end
+    end
+  end
 end

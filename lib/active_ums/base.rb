@@ -49,7 +49,7 @@ module ActiveUMS
 
     # TODO: remove (?)
     def method_missing(method_name, *args, &block)
-      attributes.fetch(method_name) if respond_to_missing?(method_name)
+      return attributes.fetch(method_name) if respond_to_missing?(method_name)
       super
     end
 
