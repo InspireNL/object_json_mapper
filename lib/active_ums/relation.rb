@@ -47,8 +47,12 @@ module ActiveUMS
     end
 
     def collection
-      HTTP.get(path, params: conditions)
-          .map { |attributes| klass.persist(attributes) }
+      response = RestClient.get(path, params: conditions)
+
+      @total_count = response.headers[:total].to_i
+      @limit_value = response.headers[:per_page].to_i
+
+      HTTP.parse_json(response.body).map { |attributes| klass.persist(attributes) }
     end
 
     def deep_clone
