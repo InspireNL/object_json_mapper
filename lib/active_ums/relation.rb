@@ -5,6 +5,7 @@ module ActiveUMS
     attr_accessor :conditions, :klass, :path
 
     delegate :each,
+             :map,
              :first,
              :last,
              :empty?,
@@ -36,12 +37,28 @@ module ActiveUMS
     end
 
     def where(conditions = {})
-      clone.tap { |relation| relation.conditions.merge!(conditions) }
+      deep_clone.tap { |relation| relation.conditions.merge!(conditions) }
+    end
+
+    # @return [Array,Array<Array>]
+    def pluck(*attributes)
+      map { |record| record.slice(*attributes).values }
+        .tap { |result| result.flatten! if attributes.size == 1 }
     end
 
     def collection
-      HTTP.get(path, params: conditions)
-          .map { |attributes| klass.persist(attributes) }
+      response = RestClient.get(path, params: conditions)
+
+      @total_count = response.headers[:total].to_i
+      @limit_value = response.headers[:per_page].to_i
+
+      HTTP.parse_json(response.body).map { |attributes| klass.persist(attributes) }
+    end
+
+    def deep_clone
+      clone.tap do |object|
+        object.conditions = conditions.clone
+      end
     end
 
     # Find and return relation of local records by `eid`

@@ -71,4 +71,58 @@ describe ActiveUMS::Base do
       expect(query).to have_been_requested
     end
   end
+
+  describe '.scope' do
+    before do
+      User.class_eval do
+        scope :active, -> { where(active: true) }
+        scope :confirmed, -> { where(confirmed: true) }
+      end
+    end
+
+    context 'scope chains' do
+      subject { User.active.confirmed }
+
+      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject.conditions).to eq(active: true, confirmed: true) }
+    end
+
+    context 'where after scope' do
+      subject { User.active.where(id: 1) }
+
+      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject.conditions).to eq(active: true, id: 1) }
+    end
+
+    context 'scope after where' do
+      subject { User.where(id: 1).active }
+
+      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject.conditions).to eq(id: 1, active: true) }
+    end
+  end
+
+  describe '#method_missing' do
+    let!(:user) { User.persist(id: 1, name: 'Name') }
+
+    context 'if key exists' do
+      context 'and defined' do
+        it 'returns attribute value by key' do
+          expect(user.id).to eq(1)
+        end
+      end
+
+      context 'and not defined' do
+        it 'returns attribute value by key' do
+          expect(user.name).to eq('Name')
+        end
+      end
+    end
+
+    context 'if key does not exists' do
+      it 'raises exception' do
+        expect { user.false_key }.to raise_error(NoMethodError)
+      end
+    end
+  end
 end

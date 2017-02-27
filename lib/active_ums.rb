@@ -21,6 +21,10 @@ require 'active_ums/routes'
 require 'active_ums/relation'
 require 'active_ums/base'
 
+if defined?(Kaminari)
+  require 'active_ums/extensions/kaminari'
+end
+
 module ActiveUMS
   mattr_accessor :base_url
 

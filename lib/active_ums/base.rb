@@ -49,7 +49,7 @@ module ActiveUMS
 
     # TODO: remove (?)
     def method_missing(method_name, *args, &block)
-      attributes.fetch(method_name) if respond_to_missing?(method_name)
+      return attributes.fetch(method_name) if respond_to_missing?(method_name)
       super
     end
 
@@ -121,6 +121,13 @@ module ActiveUMS
     end
 
     class << self
+      attr_accessor :associations, :relation
+
+      def inherited(base)
+        base.associations = Associations::Registry.new
+        base.relation     = Relation.new(klass: base)
+      end
+
       # @param name [Symbol]
       # @param type [Dry::Types::Constructor]
       # @param default [Proc]
@@ -141,9 +148,11 @@ module ActiveUMS
       # @param block [Proc]
       def scope(name, block)
         define_singleton_method(name) do
-          where.tap do |relation|
-            relation.instance_exec(&block)
-          end
+          relation.deep_clone.instance_exec(&block)
+        end
+
+        relation.define_singleton_method(name) do
+          instance_exec(&block)
         end
       end
 
@@ -168,7 +177,7 @@ module ActiveUMS
       # @param conditions [Hash]
       # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
       def where(conditions = {})
-        Relation.new(klass: self).where(conditions)
+        relation.where(conditions)
       end
 
       # @param id [Integer]
