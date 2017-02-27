@@ -13,8 +13,8 @@ module ActiveUMS
       # @option options [Hash] :params
       def initialize(name, options = {})
         @name       = name
-        @class_name = options.fetch(:class_name, name.to_s)
-        @endpoint   = options.fetch(:endpoint, name.to_s)
+        @class_name = options.fetch(:class_name, name).to_s
+        @endpoint   = options.fetch(:endpoint, name).to_s
         @params     = options.fetch(:params, {})
       end
 
