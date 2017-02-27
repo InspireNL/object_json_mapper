@@ -128,12 +128,6 @@ module ActiveUMS
         base.relation     = Relation.new(klass: base)
       end
 
-      def clear_relation
-        relation.clone.tap do |cloned|
-          cloned.conditions = relation.conditions.clone
-        end
-      end
-
       # @param name [Symbol]
       # @param type [Dry::Types::Constructor]
       # @param default [Proc]
@@ -154,7 +148,7 @@ module ActiveUMS
       # @param block [Proc]
       def scope(name, block)
         define_singleton_method(name) do
-          clear_relation.instance_exec(&block)
+          relation.deep_clone.instance_exec(&block)
         end
 
         relation.define_singleton_method(name) do

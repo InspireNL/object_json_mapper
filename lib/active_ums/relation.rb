@@ -37,7 +37,7 @@ module ActiveUMS
     end
 
     def where(conditions = {})
-      clone.tap { |relation| relation.conditions.merge!(conditions) }
+      deep_clone.tap { |relation| relation.conditions.merge!(conditions) }
     end
 
     # @return [Array,Array<Array>]
@@ -49,6 +49,12 @@ module ActiveUMS
     def collection
       HTTP.get(path, params: conditions)
           .map { |attributes| klass.persist(attributes) }
+    end
+
+    def deep_clone
+      clone.tap do |object|
+        object.conditions = conditions.clone
+      end
     end
 
     # Find and return relation of local records by `eid`
