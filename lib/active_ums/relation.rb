@@ -9,6 +9,7 @@ module ActiveUMS
              :first,
              :last,
              :empty?,
+             :select,
              :select!,
              :to_ary,
              :+,
@@ -64,10 +65,9 @@ module ActiveUMS
     # Find and return relation of local records by `eid`
     # @return [ActiveRecord::Relation]
     def locals
-      return if collection.empty?
+      return [] if collection.empty?
 
-      klass = collection.first.class.local
-      klass.where(eid: collection.map(&:id))
+      klass.where(id: collection.pluck(:id))
     end
   end
 end
