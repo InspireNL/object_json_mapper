@@ -49,9 +49,17 @@ module ActiveUMS
       def has_many(name, options = {})
         associations << HasMany.new(name, options)
 
-        # TODO: remove magic
-        define_method(name) do
-          self.class.associations.find(__method__).call(self)
+        define_method(name) do |reload = false|
+          cache_name = :"@#{__method__}"
+
+          if instance_variable_defined?(cache_name) && reload == false
+            return instance_variable_get(cache_name)
+          end
+
+          instance_variable_set(
+            cache_name,
+            self.class.associations.find(__method__).call(self)
+          )
         end
       end
 
@@ -69,9 +77,17 @@ module ActiveUMS
       def has_one(name, options = {})
         associations << HasOne.new(name, options)
 
-        # TODO: remove magic
-        define_method(name) do
-          self.class.associations.find(__method__).call(self)
+        define_method(name) do |reload = false|
+          cache_name = :"@#{__method__}"
+
+          if instance_variable_defined?(cache_name) && reload == false
+            return instance_variable_get(cache_name)
+          end
+
+          instance_variable_set(
+            cache_name,
+            self.class.associations.find(__method__).call(self)
+          )
         end
       end
       alias belongs_to has_one
