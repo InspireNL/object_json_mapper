@@ -203,6 +203,10 @@ module ActiveUMS
         where
       end
 
+      def none
+        NullRelation.new(klass: self)
+      end
+
       # @param params [Hash]
       # @return [ActiveUMS::Base] current model instance
       def create(params = {})

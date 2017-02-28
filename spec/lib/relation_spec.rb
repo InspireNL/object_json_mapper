@@ -117,4 +117,13 @@ describe ActiveUMS::Relation do
       end
     end
   end
+
+  describe '#none' do
+    subject { User.where(id: 1).none }
+
+    it { expect(subject).to be_a(ActiveUMS::NullRelation) }
+    it { expect(subject.klass).to eq(User) }
+    it { expect(subject.conditions).to eq(id: 1) }
+    it { expect(subject).to match_array([]) }
+  end
 end

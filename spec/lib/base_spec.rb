@@ -125,4 +125,11 @@ describe ActiveUMS::Base do
       end
     end
   end
+
+  describe '.none' do
+    subject { User.none }
+
+    it { expect(subject).to be_a(ActiveUMS::NullRelation) }
+    it { expect(subject.klass).to eq(User) }
+  end
 end
