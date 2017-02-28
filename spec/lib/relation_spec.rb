@@ -126,4 +126,68 @@ describe ActiveUMS::Relation do
     it { expect(subject.conditions).to eq(id: 1) }
     it { expect(subject).to match_array([]) }
   end
+
+  describe 'caching' do
+    context 'with collection' do
+      context 'without conditions' do
+        let!(:query) do
+          stub_request(:get, 'http://localhost:3000/users')
+            .to_return(body: [{ id: 1 }].to_json)
+        end
+
+        it 'caches collection' do
+          users = User.where
+
+          2.times do
+            users.collection
+          end
+
+          expect(query).to have_been_requested.once
+          expect(users).to match_array(User.persist(id: 1))
+
+          expect(User.relation.conditions).to be_empty
+        end
+      end
+
+      context 'with conditions' do
+        let!(:query) do
+          stub_request(:get, 'http://localhost:3000/users')
+            .with(query: { id: 1 })
+            .to_return(body: [{ id: 1 }].to_json)
+        end
+
+        it 'does not caches collection' do
+          users = User.where(id: 1)
+
+          2.times do
+            users.collection
+          end
+
+          expect(query).to have_been_requested.twice
+          expect(users).to match_array(User.persist(id: 1))
+
+          expect(User.relation.conditions).to be_empty
+        end
+      end
+    end
+
+    context 'without collection' do
+      let!(:query) do
+        stub_request(:get, 'http://localhost:3000/users')
+      end
+
+      it 'does not caches collection' do
+        users = User.where
+
+        2.times do
+          users.collection
+        end
+
+        expect(query).to have_been_requested.twice
+        expect(users).to match_array([])
+
+        expect(User.relation.conditions).to be_empty
+      end
+    end
+  end
 end
