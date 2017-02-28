@@ -166,3 +166,16 @@ User.where(published: true).pluck(:id, :email)
 # => GET http://localhost:3000/users?published=true
 # => [[1, 'first@example.com', [2, 'second@example.com']]
 ```
+
+## NullRelation
+
+```ruby
+User.none
+# => []
+
+User.where(id: 1).none
+# => []
+
+User.none.where(id: 1)
+# => []
+```

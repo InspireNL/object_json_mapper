@@ -19,6 +19,7 @@ require 'active_ums/local'
 require 'active_ums/routes'
 
 require 'active_ums/relation'
+require 'active_ums/null_relation'
 require 'active_ums/base'
 
 if defined?(Kaminari)

@@ -62,6 +62,10 @@ module ActiveUMS
       end
     end
 
+    def none
+      NullRelation.new(klass: klass, conditions: conditions)
+    end
+
     # Find and return relation of local records by `eid`
     # @return [ActiveRecord::Relation]
     def locals
