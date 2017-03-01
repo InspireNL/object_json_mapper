@@ -11,19 +11,12 @@ describe ActiveUMS::Base do
     end
   end
 
-  describe '.where' do
-    let!(:query) do
-      stub_request(:get, 'http://localhost:3000/users?id=1')
-        .to_return(body: [{ id: 1 }].to_json)
-    end
-
+  describe '#where' do
     subject { User.where(id: 1) }
 
     it 'returns relation with records' do
-      is_expected.to match_array(User.persist(id: 1))
+      expect(subject.conditions).to eq(id: 1)
       is_expected.to be_a(ActiveUMS::Relation)
-
-      expect(query).to have_been_requested
     end
   end
 
