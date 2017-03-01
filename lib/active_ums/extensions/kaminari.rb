@@ -44,5 +44,6 @@ module Kaminari
 end
 
 ActiveUMS::Base.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
+ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
 ActiveUMS::Relation.send(:include, Kaminari::PageScopeMethods)
 ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSCriteriaMethods)
