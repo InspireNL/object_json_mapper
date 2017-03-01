@@ -9,10 +9,6 @@ module ActiveUMS
     end
 
     module ClassMethods
-      def collection_name
-        name.underscore.pluralize
-      end
-
       def element_path(id)
         File.join(ActiveUMS.base_url, collection_name, id.to_s).to_s
       end

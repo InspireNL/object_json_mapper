@@ -1,4 +1,38 @@
 describe ActiveUMS::Relation do
+  describe '.where' do
+    context 'with primitive data type' do
+      let!(:query) do
+        stub_request(:get, 'http://localhost:3000/users?id=1')
+          .to_return(body: [{ id: 1 }].to_json)
+      end
+
+      subject { User.where(id: 1) }
+
+      it 'returns relation with records' do
+        is_expected.to match_array(User.persist(id: 1))
+        is_expected.to be_a(ActiveUMS::Relation)
+
+        expect(query).to have_been_requested
+      end
+    end
+
+    context 'with array data type' do
+      let!(:query) do
+        stub_request(:get, 'http://localhost:3000/users?id=1,2')
+          .to_return(body: [{ id: 1 }, { id: 2 }].to_json)
+      end
+
+      subject { User.where(id: [1,2]) }
+
+      it 'returns relation with records' do
+        is_expected.to match_array([User.persist(id: 1), User.persist(id: 2)])
+        is_expected.to be_a(ActiveUMS::Relation)
+
+        expect(query).to have_been_requested
+      end
+    end
+  end
+
   context 'method chaining' do
     describe '#where' do
       it 'chains conditions' do

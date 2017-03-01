@@ -179,3 +179,21 @@ User.where(id: 1).none
 User.none.where(id: 1)
 # => []
 ```
+
+## Root URL
+
+```ruby
+class User < ActiveUMS::Base
+  root_url 'people'
+end
+
+User.all
+# => GET http://localhost:3000/people
+
+User.find(1)
+# => GET http://localhost:3000/people/1
+
+User.find(1).posts
+# => GET http://localhost:3000/people/1
+# => GET http://localhost:3000/people/1/posts
+```

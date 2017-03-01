@@ -11,19 +11,12 @@ describe ActiveUMS::Base do
     end
   end
 
-  describe '.where' do
-    let!(:query) do
-      stub_request(:get, 'http://localhost:3000/users?id=1')
-        .to_return(body: [{ id: 1 }].to_json)
-    end
-
+  describe '#where' do
     subject { User.where(id: 1) }
 
     it 'returns relation with records' do
-      is_expected.to match_array(User.persist(id: 1))
+      expect(subject.conditions).to eq(id: 1)
       is_expected.to be_a(ActiveUMS::Relation)
-
-      expect(query).to have_been_requested
     end
   end
 
@@ -131,5 +124,48 @@ describe ActiveUMS::Base do
 
     it { expect(subject).to be_a(ActiveUMS::NullRelation) }
     it { expect(subject.klass).to eq(User) }
+  end
+
+  describe '.root' do
+    before do
+      User.class_eval do
+        root_url 'people'
+
+        has_many :posts
+      end
+
+      class Post < ActiveUMS::Base
+      end
+    end
+
+    it '.all still works' do
+      query = stub_request(:get, 'http://localhost:3000/people')
+      User.all.collection
+      expect(query).to have_been_requested
+    end
+
+    it '.find still works' do
+      query = stub_request(:get, 'http://localhost:3000/people/1')
+      User.find(1)
+      expect(query).to have_been_requested
+    end
+
+    it '.create still works' do
+      query = stub_request(:post, 'http://localhost:3000/people')
+      User.create(id: 1)
+      expect(query).to have_been_requested
+    end
+
+    it '.update still works' do
+      query = stub_request(:any, 'http://localhost:3000/people/1')
+      User.persist(id: 1).update(id: 2)
+      expect(query).to have_been_requested.twice
+    end
+
+    it 'associations still works' do
+      query = stub_request(:get, 'http://localhost:3000/people/1/posts')
+      User.persist(id: 1).posts.collection
+      expect(query).to have_been_requested
+    end
   end
 end

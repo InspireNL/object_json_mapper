@@ -3,6 +3,7 @@ require 'rest-client'
 require 'json'
 
 require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/object/to_query'
 require 'active_support/core_ext/enumerable'
 
 require 'active_ums/version'

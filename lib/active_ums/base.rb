@@ -121,11 +121,12 @@ module ActiveUMS
     end
 
     class << self
-      attr_accessor :associations, :relation
+      attr_accessor :associations, :relation, :collection_name
 
       def inherited(base)
-        base.associations = Associations::Registry.new
-        base.relation     = Relation.new(klass: base)
+        base.collection_name = base.name.underscore.pluralize
+        base.associations    = Associations::Registry.new
+        base.relation        = Relation.new(klass: base)
       end
 
       # @param name [Symbol]
@@ -163,6 +164,10 @@ module ActiveUMS
             relation.path = File.join(collection_path, name.to_s)
           end
         end
+      end
+
+      def root_url(value)
+        self.collection_name = value
       end
 
       # Same as `new` but for persisted records

@@ -18,9 +18,9 @@ module ActiveUMS
 
     def initialize(options = {})
       @klass      ||= options[:klass]
+      @path       ||= options[:path]
       @collection ||= options.fetch(:collection, [])
       @conditions ||= options.fetch(:conditions, {})
-      @path       ||= options.fetch(:path, klass.collection_path)
     end
 
     def find_by(conditions = {})
@@ -50,7 +50,7 @@ module ActiveUMS
     def collection
       return @collection if @collection.any? && conditions.empty?
 
-      response = RestClient.get(path, params: conditions)
+      response = RestClient.get(path, params: prepare_params(conditions))
 
       @total_count = response.headers[:total].to_i
       @limit_value = response.headers[:per_page].to_i
@@ -77,5 +77,22 @@ module ActiveUMS
 
       klass.where(id: collection.pluck(:id))
     end
+
+    private
+
+      def prepare_params(conditions)
+        conditions.deep_merge(conditions) do |_, _, value|
+          case value
+          when Array
+            value.join(',')
+          else
+            value
+          end
+        end
+      end
+
+      def path
+        @path || klass.collection_path
+      end
   end
 end
