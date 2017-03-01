@@ -22,7 +22,9 @@ module Kaminari
       end
 
       def total_pages
-        (total_count / limit_value).ceil
+        (total_count.to_f / limit_value).ceil
+      rescue ZeroDivisionError
+        1
       end
 
       def offset_value
