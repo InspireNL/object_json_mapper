@@ -18,9 +18,9 @@ module ActiveUMS
 
     def initialize(options = {})
       @klass      ||= options[:klass]
+      @path       ||= options[:path]
       @collection ||= options.fetch(:collection, [])
       @conditions ||= options.fetch(:conditions, {})
-      @path       ||= options.fetch(:path, klass.collection_path)
     end
 
     def find_by(conditions = {})
@@ -77,5 +77,11 @@ module ActiveUMS
 
       klass.where(id: collection.pluck(:id))
     end
+
+    private
+
+      def path
+        @path || klass.collection_path
+      end
   end
 end
