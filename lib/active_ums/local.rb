@@ -39,18 +39,15 @@ module ActiveUMS
       #   User.find_by_local(User.all) do
       #     where(local_column: 'value')
       #   end
-      #   # => GET http://example.com/users
       #   # => SELECT * FROM local_users WHERE local_column = 'value'
+      #   # => GET http://example.com/users?id_in=1,2,3
       def find_by_local(source, &scope)
-        result = source.dup
-        result_index = result.index_by(&:id)
-
-        ActiveUMS::Wrapper.to_relation(
-          result
-            .locals
-            .instance_exec(&scope)
-            .pluck(:eid)
-            .map { |eid| result_index[eid] }
+        source.where(
+          id_in: source.klass
+                       .local
+                       .all
+                       .instance_exec(&scope)
+                       .pluck(:id)
         )
       end
     end
