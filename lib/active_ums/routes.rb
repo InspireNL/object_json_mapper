@@ -10,11 +10,11 @@ module ActiveUMS
 
     module ClassMethods
       def element_path(id)
-        File.join(ActiveUMS.base_url, collection_name, id.to_s).to_s
+        File.join(ActiveUMS.base_url, collection_name.to_s, id.to_s).to_s
       end
 
       def collection_path(attributes = {})
-        result = File.join(ActiveUMS.base_url, collection_name).to_s
+        result = File.join(ActiveUMS.base_url, collection_name.to_s).to_s
 
         result.tap do |r|
           r << "?#{attributes.to_query}" if attributes.any?
@@ -22,7 +22,7 @@ module ActiveUMS
       end
 
       def association_path(id, name)
-        File.join(ActiveUMS.base_url, collection_name, id.to_s, name.to_s).to_s
+        File.join(ActiveUMS.base_url, collection_name.to_s, id.to_s, name.to_s).to_s
       end
     end
 

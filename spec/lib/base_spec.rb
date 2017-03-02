@@ -129,8 +129,6 @@ describe ActiveUMS::Base do
   describe '.root' do
     before do
       User.class_eval do
-        root_url 'people'
-
         has_many :posts
       end
 
@@ -138,33 +136,35 @@ describe ActiveUMS::Base do
       end
     end
 
+    let!(:people) { User.root(:people) }
+
     it '.all still works' do
       query = stub_request(:get, 'http://localhost:3000/people')
-      User.all.collection
+      people.all.collection
       expect(query).to have_been_requested
     end
 
     it '.find still works' do
       query = stub_request(:get, 'http://localhost:3000/people/1')
-      User.find(1)
+      people.find(1)
       expect(query).to have_been_requested
     end
 
     it '.create still works' do
       query = stub_request(:post, 'http://localhost:3000/people')
-      User.create(id: 1)
+      people.create(id: 1)
       expect(query).to have_been_requested
     end
 
     it '.update still works' do
       query = stub_request(:any, 'http://localhost:3000/people/1')
-      User.persist(id: 1).update(id: 2)
+      people.persist(id: 1).update(id: 2)
       expect(query).to have_been_requested.twice
     end
 
     it 'associations still works' do
       query = stub_request(:get, 'http://localhost:3000/people/1/posts')
-      User.persist(id: 1).posts.collection
+      people.persist(id: 1).posts.collection
       expect(query).to have_been_requested
     end
   end

@@ -122,11 +122,16 @@ module ActiveUMS
 
     class << self
       attr_accessor :associations, :relation, :collection_name
+      attr_writer   :name
 
       def inherited(base)
         base.collection_name = base.name.underscore.pluralize
         base.associations    = Associations::Registry.new
         base.relation        = Relation.new(klass: base)
+      end
+
+      def name
+        @name || super
       end
 
       # @param name [Symbol]
@@ -166,8 +171,11 @@ module ActiveUMS
         end
       end
 
-      def root_url(value)
-        self.collection_name = value
+      def root(value)
+        clone.tap do |base|
+          base.collection_name = value
+          base.name = name
+        end
       end
 
       # Same as `new` but for persisted records
@@ -182,7 +190,7 @@ module ActiveUMS
       # @param conditions [Hash]
       # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
       def where(conditions = {})
-        relation.where(conditions)
+        relation.tap { |relation| relation.klass = self }.where(conditions)
       end
 
       # @param id [Integer]
