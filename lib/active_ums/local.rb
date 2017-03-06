@@ -16,7 +16,7 @@ module ActiveUMS
       def local
         return @local if @local
         @local = Class.new(ActiveRecord::Base)
-        @local.table_name = collection_name
+        @local.table_name = name.underscore.pluralize
         @local
       end
 

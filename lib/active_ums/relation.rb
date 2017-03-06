@@ -47,10 +47,12 @@ module ActiveUMS
         .tap { |result| result.flatten! if attributes.size == 1 }
     end
 
+    # TODO: refactor
     def collection
       return @collection if @collection.any? && conditions.empty?
 
-      response = RestClient.get(path, params: prepare_params(conditions))
+      response = RestClient.get(path,
+        (ActiveUMS.headers || {}).merge(params: prepare_params(conditions)))
 
       @total_count = response.headers[:total].to_i
       @limit_value = response.headers[:per_page].to_i
@@ -92,7 +94,7 @@ module ActiveUMS
       end
 
       def path
-        @path || klass.collection_path
+        @path || klass.client.url
       end
   end
 end

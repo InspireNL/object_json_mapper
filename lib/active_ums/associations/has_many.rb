@@ -5,9 +5,7 @@ module ActiveUMS
       # @return [ActiveUMS::Relation]
       def call(object)
         class_name.classify.constantize.where.tap do |relation|
-          relation.path = object.association_path(
-            endpoint.to_s.underscore.pluralize
-          )
+          relation.path = object.client[endpoint.to_s.underscore.pluralize].url
         end
       end
     end

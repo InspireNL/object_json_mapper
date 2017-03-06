@@ -17,7 +17,6 @@ require 'active_ums/conversion'
 require 'active_ums/errors'
 require 'active_ums/http'
 require 'active_ums/local'
-require 'active_ums/routes'
 
 require 'active_ums/relation'
 require 'active_ums/null_relation'
@@ -28,7 +27,7 @@ if defined?(Kaminari)
 end
 
 module ActiveUMS
-  mattr_accessor :base_url
+  mattr_accessor :base_url, :headers
 
   def self.configure
     yield self
