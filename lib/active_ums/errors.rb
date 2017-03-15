@@ -4,19 +4,18 @@ module ActiveUMS
     # @example
     #   load_errors(
     #     {
-    #       "email": ["can't be blank"]
+    #       "email": ["blank"]
     #     }
     #   )
     def load_errors(messages)
       errors.clear
-
       messages.each do |key, values|
         values.each do |value|
           case value
           when String
             errors.add(key, value)
           when Hash
-            errors.add(key, value[:error], value.except(:error))
+            errors.add(key, value[:error].to_sym, value.except(:error))
           end
         end
       end

@@ -36,7 +36,6 @@ describe ActiveUMS::Errors do
 
       it 'correctly loads errors' do
         user.load_errors(errors)
-
         expect(user.errors.full_messages).to match_array([
           "Email can't be blank",
           "Password is too short (minimum is 5 characters)",
