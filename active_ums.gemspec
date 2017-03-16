@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug', '~> 3.4'
   spec.add_development_dependency 'kaminari', '~> 0.17'
 
-  spec.add_dependency 'activemodel', '~> 4.2'
-  spec.add_dependency 'activesupport', '~> 4.2'
+  spec.add_dependency 'activemodel', '>= 4.2'
+  spec.add_dependency 'activesupport', '>= 4.2'
   spec.add_dependency 'rest-client', '~> 2.0'
 end
