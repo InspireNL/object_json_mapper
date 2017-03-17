@@ -77,7 +77,7 @@ module ActiveUMS
     def locals
       return [] if collection.empty?
 
-      klass.where(id: collection.pluck(:id))
+      klass.where(id: collection.map(&:id))
     end
 
     private
