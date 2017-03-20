@@ -72,7 +72,7 @@ module ActiveUMS
       NullRelation.new(klass: klass, conditions: conditions)
     end
 
-    # Find and return relation of local records by `eid`
+    # Find and return relation of local records by `id`
     # @return [ActiveRecord::Relation]
     def locals
       return [] if collection.empty?
