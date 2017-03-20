@@ -5,7 +5,7 @@ module ActiveUMS
     end
 
     def local
-      self.class.local.find_or_initialize_by(id: id)
+      @local ||= self.class.local.find_or_initialize_by(id: id)
     end
 
     def find_by_local(source, &scope)
