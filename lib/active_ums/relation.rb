@@ -76,8 +76,7 @@ module ActiveUMS
     # @return [ActiveRecord::Relation]
     def locals
       return [] if collection.empty?
-
-      klass.where(id: collection.map(&:id))
+      klass.local.where(id: collection.map(&:id))
     end
 
     private
