@@ -6,6 +6,9 @@ module ActiveUMS
 
     def local
       @local ||= self.class.local.find_or_initialize_by(id: id)
+      # sometimes local fetched before remote was saved, thus there is no id
+      @local.id ||= id
+      @local
     end
 
     def find_by_local(source, &scope)
