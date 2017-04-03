@@ -14,6 +14,7 @@ module ActiveUMS
              :to_ary,
              :+,
              :inspect,
+             :size,
              to: :collection
 
     def initialize(options = {})
