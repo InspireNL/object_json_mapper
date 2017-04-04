@@ -12,17 +12,19 @@ module Kaminari
 
     module ActiveUMSCriteriaMethods
       def limit_value
-        collection
+        collection unless @limit_value
         @limit_value
       end
 
       def total_count
-        collection
+        collection unless @total_count
         @total_count
       end
 
       def total_pages
-        (total_count / limit_value).ceil
+        (total_count.to_f / limit_value).ceil
+      rescue ZeroDivisionError
+        1
       end
 
       def offset_value
@@ -42,5 +44,6 @@ module Kaminari
 end
 
 ActiveUMS::Base.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
+ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
 ActiveUMS::Relation.send(:include, Kaminari::PageScopeMethods)
 ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSCriteriaMethods)

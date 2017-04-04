@@ -4,9 +4,9 @@ module ActiveUMS
       # @param object [ActiveUMS::Base]
       # @return [ActiveUMS::Base]
       def call(object)
-        attributes = HTTP.get(object.association_path(endpoint), params)
-
-        class_name.classify.constantize.persist(attributes)
+        class_name.classify.constantize.persist(
+          HTTP.parse_json(object.client[endpoint.to_s.underscore].get.body)
+        )
       end
     end
   end

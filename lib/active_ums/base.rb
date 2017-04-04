@@ -5,7 +5,6 @@ module ActiveUMS
 
     include Local
     include Conversion
-    include Routes
     include Errors
     include Associations
 
@@ -35,7 +34,7 @@ module ActiveUMS
     # @return [ActiveUMS::Base]
     def reload
       tap do |base|
-        base.attributes = HTTP.get(element_path) if reloadable?
+        base.attributes = HTTP.parse_json(client.get.body) if reloadable?
       end
     end
 
@@ -62,17 +61,17 @@ module ActiveUMS
     def save(*)
       return update(attributes) if persisted?
 
-      response = RestClient.post(self.class.collection_path, attributes)
+      response = self.class.client.post(attributes)
 
       result = if response.headers[:location]
-                 HTTP.get(response.headers[:location])
+                 RestClient.get(response.headers[:location], ActiveUMS.headers)
                else
-                 HTTP.parse_json(response.body)
+                 response.body
                end
 
       persist
       errors.clear
-      attributes.merge!(result)
+      attributes.merge!(HTTP.parse_json(result))
 
       self
     rescue RestClient::ExceptionWithResponse => e
@@ -91,7 +90,7 @@ module ActiveUMS
     def update(params = {})
       return false if new_record?
 
-      RestClient.patch(self.class.element_path(id), params)
+      client.patch(params)
 
       reload
       errors.clear
@@ -108,7 +107,7 @@ module ActiveUMS
 
     # @result [TrueClass,FalseClass]
     def destroy
-      RestClient.delete(self.class.element_path(id))
+      client.delete
 
       true
     rescue RestClient::ExceptionWithResponse
@@ -120,13 +119,36 @@ module ActiveUMS
       attributes == other.attributes && persisted == other.persisted
     end
 
+    def client
+      self.class.client[id]
+    end
+
     class << self
-      attr_accessor :associations, :relation, :collection_name
+      attr_accessor :associations, :relation, :root_url
 
       def inherited(base)
-        base.collection_name = base.name.underscore.pluralize
-        base.associations    = Associations::Registry.new
-        base.relation        = Relation.new(klass: base)
+        base.root_url     = base.name.underscore.pluralize
+        base.associations = Associations::Registry.new
+        base.relation     = Relation.new(klass: base)
+      end
+
+      def client
+        RestClient::Resource.new(
+          URI.join(ActiveUMS.base_url, root_url).to_s,
+          headers: ActiveUMS.headers
+        )
+      end
+
+      def configure
+        yield self
+      end
+
+      def name=(value)
+        @name = value.to_s
+      end
+
+      def name
+        @name || super
       end
 
       # @param name [Symbol]
@@ -159,15 +181,20 @@ module ActiveUMS
 
       # @param name [Symbol]
       def path(name)
+        warn '[DEPRECATION] Use `root`.'
+
         define_singleton_method(name) do
           where.tap do |relation|
-            relation.path = File.join(collection_path, name.to_s)
+            relation.path = client[name].url
           end
         end
       end
 
-      def root_url(value)
-        self.collection_name = value
+      def root(value)
+        clone.tap do |base|
+          base.name     = name
+          base.root_url = value.to_s
+        end
       end
 
       # Same as `new` but for persisted records
@@ -182,13 +209,13 @@ module ActiveUMS
       # @param conditions [Hash]
       # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
       def where(conditions = {})
-        relation.where(conditions)
+        relation.tap { |relation| relation.klass = self }.where(conditions)
       end
 
       # @param id [Integer]
       # @return [ActiveUMS::Base] current model instance
       def find(id)
-        result = HTTP.get(element_path(id))
+        result = HTTP.parse_json(client[id].get.body)
 
         persist(result)
       rescue RestClient::ExceptionWithResponse
@@ -215,15 +242,15 @@ module ActiveUMS
       # @param params [Hash]
       # @return [ActiveUMS::Base] current model instance
       def create(params = {})
-        response = RestClient.post(collection_path, params)
+        response = client.post(params)
 
         result = if response.headers[:location]
-                   HTTP.get(response.headers[:location])
+                   RestClient.get(response.headers[:location], ActiveUMS.headers)
                  else
-                   HTTP.parse_json(response.body)
+                   response.body
                  end
 
-        persist(result)
+        persist(HTTP.parse_json(result))
       rescue RestClient::ExceptionWithResponse => e
         raise e unless e.response.code == 422
 

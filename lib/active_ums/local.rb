@@ -5,7 +5,10 @@ module ActiveUMS
     end
 
     def local
-      self.class.local.find_or_initialize_by(id: id)
+      @local ||= self.class.local.find_or_initialize_by(id: id)
+      # sometimes local fetched before remote was saved, thus there is no id
+      @local.id ||= id
+      @local
     end
 
     def find_by_local(source, &scope)
@@ -16,7 +19,7 @@ module ActiveUMS
       def local
         return @local if @local
         @local = Class.new(ActiveRecord::Base)
-        @local.table_name = collection_name
+        @local.table_name = name.underscore.pluralize
         @local
       end
 

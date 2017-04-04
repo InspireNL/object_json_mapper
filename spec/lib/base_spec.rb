@@ -21,14 +21,31 @@ describe ActiveUMS::Base do
   end
 
   describe '.create' do
-    let!(:query) do
-      stub_request(:post, 'http://localhost:3000/users')
-        .to_return(body: { id: 1 }.to_json)
+    context 'without errors' do
+      let!(:query) do
+        stub_request(:post, 'http://localhost:3000/users')
+          .to_return(body: { id: 1 }.to_json)
+      end
+
+      it 'creates record' do
+        expect(User.create(id: 1)).to eq(User.persist(id: 1))
+        expect(query).to have_been_requested
+      end
     end
 
-    it 'creates record' do
-      expect(User.create(id: 1)).to eq(User.persist(id: 1))
-      expect(query).to have_been_requested
+    context 'with errors' do
+      let!(:query) do
+        stub_request(:post, 'http://localhost:3000/users')
+          .to_return(status: 422)
+      end
+
+      it 'returns new record' do
+        user = User.create
+
+        expect(user).to be_a(User)
+        expect(user.persisted?).to be false
+        expect(query).to have_been_requested
+      end
     end
   end
 
@@ -129,8 +146,6 @@ describe ActiveUMS::Base do
   describe '.root' do
     before do
       User.class_eval do
-        root_url 'people'
-
         has_many :posts
       end
 
@@ -138,33 +153,35 @@ describe ActiveUMS::Base do
       end
     end
 
+    let!(:people) { User.root(:people) }
+
     it '.all still works' do
       query = stub_request(:get, 'http://localhost:3000/people')
-      User.all.collection
+      people.all.collection
       expect(query).to have_been_requested
     end
 
     it '.find still works' do
       query = stub_request(:get, 'http://localhost:3000/people/1')
-      User.find(1)
+      people.find(1)
       expect(query).to have_been_requested
     end
 
     it '.create still works' do
       query = stub_request(:post, 'http://localhost:3000/people')
-      User.create(id: 1)
+      people.create(id: 1)
       expect(query).to have_been_requested
     end
 
     it '.update still works' do
       query = stub_request(:any, 'http://localhost:3000/people/1')
-      User.persist(id: 1).update(id: 2)
+      people.persist(id: 1).update(id: 2)
       expect(query).to have_been_requested.twice
     end
 
     it 'associations still works' do
       query = stub_request(:get, 'http://localhost:3000/people/1/posts')
-      User.persist(id: 1).posts.collection
+      people.persist(id: 1).posts.collection
       expect(query).to have_been_requested
     end
   end
