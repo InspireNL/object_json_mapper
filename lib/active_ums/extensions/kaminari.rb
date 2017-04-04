@@ -12,12 +12,12 @@ module Kaminari
 
     module ActiveUMSCriteriaMethods
       def limit_value
-        collection
+        collection unless @limit_value
         @limit_value
       end
 
       def total_count
-        collection
+        collection unless @total_count
         @total_count
       end
 
