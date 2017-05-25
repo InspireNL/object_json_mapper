@@ -5,6 +5,7 @@ module ActiveUMS
 
     include Local
     include Conversion
+    include Serialization
     include Errors
     include Associations
 
