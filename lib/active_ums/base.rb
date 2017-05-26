@@ -176,17 +176,6 @@ module ActiveUMS
         end
       end
 
-      # @param name [Symbol]
-      def path(name)
-        warn '[DEPRECATION] Use `root`.'
-
-        define_singleton_method(name) do
-          where.tap do |relation|
-            relation.path = client[name].url
-          end
-        end
-      end
-
       def root(value)
         clone.tap do |base|
           base.name     = name
