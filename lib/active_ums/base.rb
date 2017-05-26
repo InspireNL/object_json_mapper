@@ -43,19 +43,15 @@ module ActiveUMS
       to_key.any?
     end
 
+    # @param value [Hash]
     def attributes=(value)
       @attributes = HashWithIndifferentAccess.new(value)
-    end
 
-    # TODO: remove (?)
-    def method_missing(method_name, *args, &block)
-      return attributes.fetch(method_name) if respond_to_missing?(method_name)
-      super
-    end
-
-    # TODO: remove (?)
-    def respond_to_missing?(name, *)
-      attributes.key?(name)
+      @attributes.each do |method_name, _|
+        define_singleton_method(method_name) do
+          @attributes[method_name]
+        end
+      end
     end
 
     # @return [ActiveUMS::Base,FalseClass]
