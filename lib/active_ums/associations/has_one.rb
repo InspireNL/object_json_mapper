@@ -4,8 +4,8 @@ module ActiveUMS
       # @param object [ActiveUMS::Base]
       # @return [ActiveUMS::Base]
       def call(object)
-        class_name.classify.constantize.persist(
-          HTTP.parse_json(object.client[endpoint.to_s.underscore].get.body)
+        klass.persist(
+          HTTP.parse_json(object.client[endpoint].get.body)
         )
       end
     end

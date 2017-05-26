@@ -4,22 +4,32 @@ module ActiveUMS
     #
     # @abstract
     class Association
-      attr_reader :name, :class_name, :endpoint, :params
+      attr_reader :name, :params
 
       # @param name [Symbol]
       # @param options [Hash]
-      # @option options [Symbol] :class_name
-      # @option options [Symbol] :endpoint
+      # @option options [Object] :klass
+      # @option options [String] :endpoint
       # @option options [Hash] :params
       def initialize(name, options = {})
-        @name       = name
-        @class_name = options.fetch(:class_name, name).to_s
-        @endpoint   = options.fetch(:endpoint, name).to_s
-        @params     = options.fetch(:params, {})
+        @name     = name
+        @klass    = options.fetch(:class_name, name)
+        @endpoint = options.fetch(:endpoint, name)
+        @params   = options.fetch(:params, {})
       end
 
       def call(*)
         raise NotImplementedError
+      end
+
+      def klass
+        return @klass.to_s.classify.constantize if @klass.is_a?(Symbol)
+
+        @klass
+      end
+
+      def endpoint
+        @endpoint.to_s.underscore
       end
     end
   end
