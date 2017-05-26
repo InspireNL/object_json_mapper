@@ -1,5 +1,26 @@
 # ActiveUMS
 
+[![CircleCI](https://circleci.com/gh/InspireNL/ActiveUMS.svg?style=svg&circle-token=28455d7bc9acb59984023207070f1f4afdc60d15)](https://circleci.com/gh/InspireNL/ActiveUMS)
+
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Find](#find)
+  * [Where](#where)
+  * [Create](#create)
+  * [Update](#update)
+  * [Delete](#delete)
+* [Attributes](#attributes)
+  * [Defaults](#defaults)
+  * [Coercion](#coercion)
+* [Associations](#associations)
+  * [HasMany](#hasmany)
+  * [BelongsTo / HasOne](#belongsto--hasone)
+* [Scope](#scope)
+* [Pluck](#pluck)
+* [None](#none)
+* [Root](#root)
+* [Configure](#configure)
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -24,7 +45,13 @@ Set default url for your API in `config/initializers/active_ums.rb`:
 require 'active_ums'
 
 ActiveUMS.configure do |config|
+  # Required
   config.base_url = 'http://localhost:3000'
+
+  # Optional
+  config.headers  = {
+    'Authorization' => 'secret-token'
+  }
 end
 ```
 
@@ -85,6 +112,8 @@ u.delete
 
 ### Defaults
 
+Executes given `Proc` if value is `nil`.
+
 ```ruby
 class User < ActiveUMS::Base
   attribute :created_at, default: -> { DateTime.now }
@@ -92,6 +121,8 @@ end
 ```
 
 ### Coercion
+
+Expects a object with `#call` interface to return modified value.
 
 ```ruby
 class User < ActiveUMS::Base
@@ -101,7 +132,9 @@ end
 
 ## Associations
 
-### Has Many
+### HasMany
+
+Returns a `Relation` with model objects.
 
 ```ruby
 class User < ActiveUMS::Base
@@ -112,7 +145,9 @@ User.find(1).posts
 # => GET http://localhost:3000/users/1/posts
 ```
 
-### Belongs To / Has One
+### BelongsTo / HasOne
+
+Returns a single model object.
 
 ```ruby
 class Post < ActiveUMS::Base
@@ -127,7 +162,10 @@ Post.find(1).image
 # => GET http://localhost:3000/posts/1/image
 ```
 
-## Scopes
+## Scope
+
+Defines a scope for current model and all it relations.
+It's possible to chain `#where` methods and defined scopes in any order.
 
 ```ruby
 class User < ActiveUMS::Base
@@ -148,17 +186,6 @@ User.where(active: true).published
 # => GET http://localhost:3000/users?active=true&published=true
 ```
 
-## Path
-
-```ruby
-class User < ActiveUMS::Base
-  path :confirmed
-end
-
-User.confirmed.where(name: 'Name')
-# => GET http://localhost:3000/users/confirmed?name=Name
-```
-
 ## Pluck
 
 ```ruby
@@ -167,7 +194,9 @@ User.where(published: true).pluck(:id, :email)
 # => [[1, 'first@example.com', [2, 'second@example.com']]
 ```
 
-## NullRelation
+## None
+
+Returns a chainable relation without records, wouldn't make any queries.
 
 ```ruby
 User.none
@@ -180,11 +209,26 @@ User.none.where(id: 1)
 # => []
 ```
 
-## Root URL
+## Root
+
+Allows to change resource path for model client.
+
+```ruby
+User.root('people').where(name: 'Name')
+# => GET http://localhost:3000/people?name=Name
+```
+
+## Configure
+
+Available options:
+
+* `root_url` - resource path for current model.
 
 ```ruby
 class User < ActiveUMS::Base
-  root_url 'people'
+  configure do |c|
+    c.root_url = 'people'
+  end
 end
 
 User.all
@@ -197,3 +241,11 @@ User.find(1).posts
 # => GET http://localhost:3000/people/1
 # => GET http://localhost:3000/people/1/posts
 ```
+
+## License
+
+ActiveUMS is released under the [MIT License](https://github.com/InspireNL/ActiveUMS/blob/master/LICENSE).
+
+## About
+
+ActiveUMS is maintained by [Inspire](https://inspire.nl).
