@@ -49,26 +49,6 @@ describe ActiveUMS::Relation do
     end
   end
 
-  context 'custom path' do
-    describe '#where' do
-      let!(:query) do
-        stub_request(:get, 'http://localhost:3000/users/confirmed')
-          .with(query: { id: 1 })
-          .to_return(body: [{ id: 1 }].to_json)
-      end
-
-      it 'changes request path' do
-        User.class_eval do
-          path :confirmed
-        end
-
-        User.confirmed.where(id: 1).inspect
-
-        expect(query).to have_been_requested
-      end
-    end
-  end
-
   context 'finders' do
     let!(:true_user) { User.persist(id: 1) }
     let!(:false_user) { User.persist(id: 2) }
