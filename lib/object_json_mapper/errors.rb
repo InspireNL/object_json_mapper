@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Errors
     # @param messages [Hash]
     # @example

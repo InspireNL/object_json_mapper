@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   class Relation
     include Enumerable
 
@@ -53,7 +53,7 @@ module ActiveUMS
       return @collection if @collection.any? && conditions.empty?
 
       response = RestClient.get(path,
-        (ActiveUMS.headers || {}).merge(params: prepare_params(conditions)))
+        (ObjectJSONMapper.headers || {}).merge(params: prepare_params(conditions)))
 
       @total_count = response.headers[:total].to_i
       @limit_value = response.headers[:per_page].to_i

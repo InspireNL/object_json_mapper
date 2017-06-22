@@ -1,4 +1,4 @@
-describe ActiveUMS::Base do
+describe ObjectJSONMapper::Base do
   describe '.create' do
     context 'without errors' do
       let!(:query) do

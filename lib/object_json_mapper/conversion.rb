@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Conversion
     def to_model
       self

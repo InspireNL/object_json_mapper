@@ -1,4 +1,4 @@
-describe ActiveUMS::Errors do
+describe ObjectJSONMapper::Errors do
   let(:user) { User.new }
 
   context 'using rails 4.2 validation errors' do

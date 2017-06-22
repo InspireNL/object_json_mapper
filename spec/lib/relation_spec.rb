@@ -1,4 +1,4 @@
-describe ActiveUMS::Relation do
+describe ObjectJSONMapper::Relation do
   describe '.where' do
     context 'with primitive data type' do
       let!(:query) do
@@ -10,7 +10,7 @@ describe ActiveUMS::Relation do
 
       it 'returns relation with records' do
         is_expected.to match_array(User.persist(id: 1))
-        is_expected.to be_a(ActiveUMS::Relation)
+        is_expected.to be_a(ObjectJSONMapper::Relation)
 
         expect(query).to have_been_requested
       end
@@ -26,7 +26,7 @@ describe ActiveUMS::Relation do
 
       it 'returns relation with records' do
         is_expected.to match_array([User.persist(id: 1), User.persist(id: 2)])
-        is_expected.to be_a(ActiveUMS::Relation)
+        is_expected.to be_a(ObjectJSONMapper::Relation)
 
         expect(query).to have_been_requested
       end
@@ -135,7 +135,7 @@ describe ActiveUMS::Relation do
   describe '#none' do
     subject { User.where(id: 1).none }
 
-    it { expect(subject).to be_a(ActiveUMS::NullRelation) }
+    it { expect(subject).to be_a(ObjectJSONMapper::NullRelation) }
     it { expect(subject.klass).to eq(User) }
     it { expect(subject.conditions).to eq(id: 1) }
     it { expect(subject).to match_array([]) }

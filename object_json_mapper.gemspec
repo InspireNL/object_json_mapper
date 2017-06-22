@@ -1,25 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'active_ums/version'
+require 'object_json_mapper/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'active_ums'
-  spec.version       = ActiveUMS::VERSION
-  spec.authors       = ['droptheplot']
-  spec.email         = ['novikov359@gmail.com']
+  spec.name          = 'object_json_mapper'
+  spec.version       = ObjectJSONMapper::VERSION
+  spec.authors       = ['droptheplot', 'InspireNL']
+  spec.email         = ['novikov359@gmail.com', 'info@inspire.nl']
 
-  spec.summary       = 'ActiveResource for UMS.'
-  spec.homepage      = 'https://github.com/InspireNL/ActiveUMS'
+  spec.summary       = 'Add the power of ActiveRecord to your API client.'
+  spec.homepage      = 'https://github.com/InspireNL/object_json_mapper'
   spec.license       = 'MIT'
-
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against public gem pushes.'
-  end
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'exe'

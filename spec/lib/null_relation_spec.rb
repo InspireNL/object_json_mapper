@@ -1,4 +1,4 @@
-describe ActiveUMS::NullRelation do
+describe ObjectJSONMapper::NullRelation do
   describe '#conditions' do
     let!(:query) { stub_request(:get, 'http://localhost:3000/users') }
 

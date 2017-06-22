@@ -1,4 +1,4 @@
-describe ActiveUMS::Base do
+describe ObjectJSONMapper::Base do
   describe '.find' do
     let!(:query) do
       stub_request(:get, 'http://localhost:3000/users/1')
@@ -16,7 +16,7 @@ describe ActiveUMS::Base do
 
     it 'returns relation with records' do
       expect(subject.conditions).to eq(id: 1)
-      is_expected.to be_a(ActiveUMS::Relation)
+      is_expected.to be_a(ObjectJSONMapper::Relation)
     end
   end
 
@@ -31,21 +31,21 @@ describe ActiveUMS::Base do
     context 'scope chains' do
       subject { User.active.confirmed }
 
-      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
       it { expect(subject.conditions).to eq(active: true, confirmed: true) }
     end
 
     context 'where after scope' do
       subject { User.active.where(id: 1) }
 
-      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
       it { expect(subject.conditions).to eq(active: true, id: 1) }
     end
 
     context 'scope after where' do
       subject { User.where(id: 1).active }
 
-      it { expect(subject).to be_a(ActiveUMS::Relation) }
+      it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
       it { expect(subject.conditions).to eq(id: 1, active: true) }
     end
   end
@@ -53,7 +53,7 @@ describe ActiveUMS::Base do
   describe '.none' do
     subject { User.none }
 
-    it { expect(subject).to be_a(ActiveUMS::NullRelation) }
+    it { expect(subject).to be_a(ObjectJSONMapper::NullRelation) }
     it { expect(subject.klass).to eq(User) }
   end
 
@@ -63,7 +63,7 @@ describe ActiveUMS::Base do
         has_many :posts
       end
 
-      class Post < ActiveUMS::Base
+      class Post < ObjectJSONMapper::Base
       end
     end
 

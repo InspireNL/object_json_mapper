@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Associations
     # Base class for association builders
     #

@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Associations
     def self.included(base)
       base.extend(ClassMethods)
@@ -9,43 +9,43 @@ module ActiveUMS
       #
       # @param association_name [Symbol]
       # @param class_name [Symbol]
-      # @return [ActiveUMS::Relation<ActiveUMS::Base>]
+      # @return [ObjectJSONMapper::Relation<ObjectJSONMapper::Base>]
       #
       # @example Basic usage
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     has_many :products
       #   end
       #
       #   User.find(1).products
       #   # GET http://localhost:3000/v1/users/1/products
-      #   # => #<ActiveUMS::Relation @collection=[<Product>...]>
+      #   # => #<ObjectJSONMapper::Relation @collection=[<Product>...]>
       #
       # @example With class_name
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     has_many :things, class_name: :products
       #   end
       #
       #   User.find(1).things
       #   # GET http://localhost:3000/v1/users/1/things
-      #   # => #<ActiveUMS::Relation @collection=[<Product>...]>
+      #   # => #<ObjectJSONMapper::Relation @collection=[<Product>...]>
       #
       # @example With endpoint
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     has_many :products, endpoint: :things
       #   end
       #
       #   User.find(1).products
       #   # GET http://localhost:3000/v1/users/1/things
-      #   # => #<ActiveUMS::Relation @collection=[<Product>...]>
+      #   # => #<ObjectJSONMapper::Relation @collection=[<Product>...]>
       #
       # @example With params
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     has_many :products, params: { status: :active }
       #   end
       #
       #   User.find(1).products
       #   # GET http://localhost:3000/v1/users/1/products?status=active
-      #   # => #<ActiveUMS::Relation @collection=[<Product>...]>
+      #   # => #<ObjectJSONMapper::Relation @collection=[<Product>...]>
       def has_many(name, options = {})
         associations << HasMany.new(name, options)
 
@@ -64,16 +64,16 @@ module ActiveUMS
       end
 
       # @param association_name [Symbol]
-      # @return [ActiveUMS::Base]
+      # @return [ObjectJSONMapper::Base]
       #
       # @example Basic usage
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     has_one :profile
       #   end
       #
       #   User.find(1).profile
       #   # GET http://localhost:3000/v1/users/1/profile
-      #   # => #<ActiveUMS::Base @attributes={...}>
+      #   # => #<ObjectJSONMapper::Base @attributes={...}>
       def has_one(name, options = {})
         associations << HasOne.new(name, options)
 

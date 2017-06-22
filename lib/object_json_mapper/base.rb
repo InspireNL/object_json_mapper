@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   class Base
     include ActiveModel::Validations
     include ActiveModel::Validations::Callbacks
@@ -67,8 +67,8 @@ module ActiveUMS
 
       def client
         RestClient::Resource.new(
-          URI.join(ActiveUMS.base_url, root_url).to_s,
-          headers: ActiveUMS.headers
+          URI.join(ObjectJSONMapper.base_url, root_url).to_s,
+          headers: ObjectJSONMapper.headers
         )
       end
 
@@ -121,7 +121,7 @@ module ActiveUMS
 
       # Same as `new` but for persisted records
       # @param attributes [Hash]
-      # @return [ActiveUMS::Base]
+      # @return [ObjectJSONMapper::Base]
       def persist(attributes = {})
         new(attributes).tap do |base|
           base.persisted = true
@@ -129,14 +129,14 @@ module ActiveUMS
       end
 
       # @param conditions [Hash]
-      # @return [ActiveUMS::Relation<ActiveUMS::Base>] collection of model instances
+      # @return [ObjectJSONMapper::Relation<ObjectJSONMapper::Base>] collection of model instances
       def where(conditions = {})
         relation.tap { |relation| relation.klass = self }.where(conditions)
       end
       alias all where
 
       # @param id [Integer]
-      # @return [ActiveUMS::Base] current model instance
+      # @return [ObjectJSONMapper::Base] current model instance
       def find(id)
         raise ActiveRecord::RecordNotFound if id.nil?
 
@@ -150,7 +150,7 @@ module ActiveUMS
       # rubocop:disable Rails/FindBy
       #
       # @param conditions [Hash]
-      # @return [ActiveUMS::Base] current model instance
+      # @return [ObjectJSONMapper::Base] current model instance
       def find_by(conditions = {})
         where(conditions).first
       end

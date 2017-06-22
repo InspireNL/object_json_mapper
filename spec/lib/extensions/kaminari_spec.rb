@@ -1,7 +1,7 @@
 require 'kaminari'
-require 'active_ums/extensions/kaminari'
+require 'object_json_mapper/extensions/kaminari'
 
-describe Kaminari::ActiveUMS do
+describe Kaminari::ObjectJSONMapper do
   describe 'page 1' do
     before do
       stub_request(:get, 'http://localhost:3000/users')
@@ -11,7 +11,7 @@ describe Kaminari::ActiveUMS do
 
     subject { User.page(1) }
 
-    it { expect(subject).to be_a(ActiveUMS::Relation) }
+    it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
     it { expect(subject.current_page).to eq(1) }
     it { expect(subject.prev_page).to be nil }
     it { expect(subject.next_page).to eq(2) }
@@ -31,7 +31,7 @@ describe Kaminari::ActiveUMS do
 
     subject { User.page(2) }
 
-    it { expect(subject).to be_a(ActiveUMS::Relation) }
+    it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
     it { expect(subject.current_page).to eq(2) }
     it { expect(subject.prev_page).to eq(1) }
     it { expect(subject.next_page).to eq(3) }
@@ -51,7 +51,7 @@ describe Kaminari::ActiveUMS do
 
     subject { User.page(3) }
 
-    it { expect(subject).to be_a(ActiveUMS::Relation) }
+    it { expect(subject).to be_a(ObjectJSONMapper::Relation) }
     it { expect(subject.current_page).to eq(3) }
     it { expect(subject.prev_page).to eq(2) }
     it { expect(subject.next_page).to be nil }

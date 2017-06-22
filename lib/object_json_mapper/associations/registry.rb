@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Associations
     # Collection of model associations
     class Registry
@@ -16,7 +16,7 @@ module ActiveUMS
       end
 
       # @param name [Symbol]
-      # @return [ActiveUMS::Associations::Association]
+      # @return [ObjectJSONMapper::Associations::Association]
       def find(name)
         associations.find { |a| a.name == name }
       end
