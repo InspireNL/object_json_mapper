@@ -138,6 +138,8 @@ module ActiveUMS
       # @param id [Integer]
       # @return [ActiveUMS::Base] current model instance
       def find(id)
+        raise ActiveRecord::RecordNotFound if id.nil?
+
         result = HTTP.parse_json(client[id].get.body)
 
         persist(result)
