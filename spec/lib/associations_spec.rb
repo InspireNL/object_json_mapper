@@ -1,9 +1,9 @@
-describe ActiveUMS::Base do
+describe ObjectJSONMapper::Base do
   before do
     stub_request(:get, 'http://localhost:3000/users/1')
       .to_return(body: { id: 1 }.to_json)
 
-    class Post < ActiveUMS::Base
+    class Post < ObjectJSONMapper::Base
     end
   end
 

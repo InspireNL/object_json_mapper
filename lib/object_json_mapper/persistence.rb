@@ -1,17 +1,17 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Persistence
     def self.included(base)
       base.extend(ClassMethods)
     end
 
-    # @return [ActiveUMS::Base,FalseClass]
+    # @return [ObjectJSONMapper::Base,FalseClass]
     def save(*)
       return update(attributes) if persisted?
 
       response = self.class.client.post(attributes)
 
       result = if response.headers[:location]
-                 RestClient.get(response.headers[:location], ActiveUMS.headers)
+                 RestClient.get(response.headers[:location], ObjectJSONMapper.headers)
                else
                  response.body
                end
@@ -33,7 +33,7 @@ module ActiveUMS
     alias save! save
 
     # @param params [Hash]
-    # @return [ActiveUMS::Base,FalseClass]
+    # @return [ObjectJSONMapper::Base,FalseClass]
     def update(params = {})
       return false if new_record?
 
@@ -62,7 +62,7 @@ module ActiveUMS
     end
     alias delete destroy
 
-    # @return [ActiveUMS::Base]
+    # @return [ObjectJSONMapper::Base]
     def reload
       tap do |base|
         base.attributes = HTTP.parse_json(client.get.body) if reloadable?
@@ -71,12 +71,12 @@ module ActiveUMS
 
     module ClassMethods
       # @param params [Hash]
-      # @return [ActiveUMS::Base] current model instance
+      # @return [ObjectJSONMapper::Base] current model instance
       def create(params = {})
         response = client.post(params)
 
         result = if response.headers[:location]
-                   RestClient.get(response.headers[:location], ActiveUMS.headers)
+                   RestClient.get(response.headers[:location], ObjectJSONMapper.headers)
                  else
                    response.body
                  end

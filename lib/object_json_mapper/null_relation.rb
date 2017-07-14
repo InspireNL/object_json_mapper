@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   class NullRelation < Relation
     def collection
       []

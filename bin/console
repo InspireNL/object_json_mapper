@@ -1,7 +1,34 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'active_ums'
+require 'object_json_mapper'
 require 'pry'
+# require 'irb'
+
+ObjectJSONMapper.configure do |config|
+  config.base_url = 'http://localhost:3000/v1/'
+  config.headers  = {
+    'Authorization-Consumer' => '65d064d8-4b52-4b4d-8f5b-acc36a21e3bf'
+  }
+end
+
+class User < ObjectJSONMapper::Base
+  attribute :id
+  attribute :email
+  attribute :password
+
+  has_many :subscriptions
+
+  scope :qwe, -> { where(id: 1) }
+
+  configure do |c|
+    c.root_url = 'children'
+  end
+end
+
+class Subscription < ObjectJSONMapper::Base
+  belongs_to :user
+end
 
 Pry.start
+# IRB.start

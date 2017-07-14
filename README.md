@@ -1,6 +1,7 @@
-# ActiveUMS
+# ObjectJSONMapper
 
-[![CircleCI](https://circleci.com/gh/InspireNL/ActiveUMS.svg?style=svg&circle-token=28455d7bc9acb59984023207070f1f4afdc60d15)](https://circleci.com/gh/InspireNL/ActiveUMS)
+[![Gem Version](https://badge.fury.io/rb/object_json_mapper.svg)](https://badge.fury.io/rb/object_json_mapper)
+[![CircleCI](https://circleci.com/gh/InspireNL/object_json_mapper.svg?style=svg&circle-token=28455d7bc9acb59984023207070f1f4afdc60d15)](https://circleci.com/gh/InspireNL/object_json_mapper)
 
 * [Installation](#installation)
 * [Usage](#usage)
@@ -26,7 +27,7 @@
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_ums'
+gem 'object_json_mapper'
 ```
 
 And then execute:
@@ -35,16 +36,16 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install active_ums
+    $ gem install object_json_mapper
 
 ## Usage
 
-Set default url for your API in `config/initializers/active_ums.rb`:
+Set default url for your API in `config/initializers/object_json_mapper.rb`:
 
 ```ruby
-require 'active_ums'
+require 'object_json_mapper'
 
-ActiveUMS.configure do |config|
+ObjectJSONMapper.configure do |config|
   # Required
   config.base_url = 'http://localhost:3000'
 
@@ -58,7 +59,7 @@ end
 Define class, e.g. `User`:
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
 end
 ```
 
@@ -115,7 +116,7 @@ u.delete
 Executes given `Proc` if value is `nil`.
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
   attribute :created_at, default: -> { DateTime.now }
 end
 ```
@@ -125,7 +126,7 @@ end
 Expects a object with `#call` interface to return modified value.
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
   attribute :created_at, type: Dry::Types['form.date_time']
 end
 ```
@@ -137,7 +138,7 @@ end
 Returns a `Relation` with model objects.
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
   has_many :posts
 end
 
@@ -150,7 +151,7 @@ User.find(1).posts
 Returns a single model object.
 
 ```ruby
-class Post < ActiveUMS::Base
+class Post < ObjectJSONMapper::Base
   belongs_to :user
   has_one :image
 end
@@ -168,7 +169,7 @@ Defines a scope for current model and all it relations.
 It's possible to chain `#where` methods and defined scopes in any order.
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
   scope :published, -> { where(published: true) }
   scope :active, -> { where(active: true) }
 end
@@ -225,7 +226,7 @@ Available options:
 * `root_url` - resource path for current model.
 
 ```ruby
-class User < ActiveUMS::Base
+class User < ObjectJSONMapper::Base
   configure do |c|
     c.root_url = 'people'
   end
@@ -244,8 +245,8 @@ User.find(1).posts
 
 ## License
 
-ActiveUMS is released under the [MIT License](https://github.com/InspireNL/ActiveUMS/blob/master/LICENSE).
+ObjectJSONMapper is released under the [MIT License](https://github.com/InspireNL/ObjectJSONMapper/blob/master/LICENSE).
 
 ## About
 
-ActiveUMS is maintained by [Inspire](https://inspire.nl).
+ObjectJSONMapper is maintained by [Inspire](https://inspire.nl).

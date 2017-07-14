@@ -1,8 +1,8 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Associations
     class HasMany < Association
-      # @param object [ActiveUMS::Base]
-      # @return [ActiveUMS::Relation]
+      # @param object [ObjectJSONMapper::Base]
+      # @return [ObjectJSONMapper::Relation]
       def call(object)
         klass.where.tap do |relation|
           relation.path = object.client[endpoint].url

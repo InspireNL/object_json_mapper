@@ -1,4 +1,4 @@
-module ActiveUMS
+module ObjectJSONMapper
   module Local
     def self.included(base)
       base.extend(ClassMethods)
@@ -25,12 +25,12 @@ module ActiveUMS
 
       # Allows you to apply filters from local model to remote data.
       #
-      # @param source [ActiveUMS::Relation]
+      # @param source [ObjectJSONMapper::Relation]
       # @param scope [Proc] scope to execute on local results
-      # @return [ActiveUMS:Relation]
+      # @return [ObjectJSONMapper:Relation]
       #
       # @example
-      #   class User < ActiveUMS::Base
+      #   class User < ObjectJSONMapper::Base
       #     def self.local
       #       LocalUser
       #     end

@@ -1,6 +1,6 @@
 module Kaminari
-  module ActiveUMS
-    module ActiveUMSExtension
+  module ObjectJSONMapper
+    module ObjectJSONMapperExtension
       include Kaminari::ConfigurationMethods
 
       def self.included(base)
@@ -10,7 +10,7 @@ module Kaminari
       end
     end
 
-    module ActiveUMSCriteriaMethods
+    module ObjectJSONMapperCriteriaMethods
       def limit_value
         collection unless @limit_value
         @limit_value
@@ -42,7 +42,7 @@ module Kaminari
   end
 end
 
-ActiveUMS::Base.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
-ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSExtension)
-ActiveUMS::Relation.send(:include, Kaminari::PageScopeMethods)
-ActiveUMS::Relation.send(:include, Kaminari::ActiveUMS::ActiveUMSCriteriaMethods)
+ObjectJSONMapper::Base.send(:include, Kaminari::ObjectJSONMapper::ObjectJSONMapperExtension)
+ObjectJSONMapper::Relation.send(:include, Kaminari::ObjectJSONMapper::ObjectJSONMapperExtension)
+ObjectJSONMapper::Relation.send(:include, Kaminari::PageScopeMethods)
+ObjectJSONMapper::Relation.send(:include, Kaminari::ObjectJSONMapper::ObjectJSONMapperCriteriaMethods)
