@@ -1,0 +1,68 @@
+AllCops:
+  Include:
+    - "Gemfile"
+  Exclude:
+    - "config.ru"
+    - "bin/*"
+    - "db/**/*"
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/LineLength:
+  Enabled: true
+  Max: 125
+
+Metrics/MethodLength:
+  Max: 25
+
+Rails:
+  Enabled: true
+
+Rails/Validation:
+  Include:
+    - "app/models/**/*.rb"
+    - "app/forms/**/*.rb"
+
+Style/AlignHash:
+  EnforcedLastArgumentHashStyle: ignore_implicit
+
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: nested
+
+Style/Documentation:
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/RegexpLiteral:
+  EnforcedStyle: mixed
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: single_quotes
+
+Style/TrivialAccessors:
+  AllowPredicates: true
+  AllowDSLWriters: true
