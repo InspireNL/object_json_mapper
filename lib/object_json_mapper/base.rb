@@ -93,7 +93,7 @@ module ObjectJSONMapper
       def attribute(name, type: nil, default: nil)
         define_method(name) do
           return default.call if attributes.exclude?(name) && default
-          return type.call(self) if type
+          return type.call(attributes[name]) if type
 
           attributes[name]
         end
