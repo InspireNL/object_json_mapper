@@ -4,9 +4,12 @@ module Kaminari
       include Kaminari::ConfigurationMethods
 
       def self.included(base)
-        base.define_singleton_method(Kaminari.config.page_method_name) do |num|
+        page = lambda do |num|
           where(page: num, per_page: Kaminari.config.default_per_page)
         end
+
+        base.define_singleton_method(Kaminari.config.page_method_name, &page)
+        base.send(:define_method, Kaminari.config.page_method_name, &page)
       end
     end
 

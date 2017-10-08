@@ -20,6 +20,7 @@
 * [Pluck](#pluck)
 * [None](#none)
 * [Root](#root)
+* [Paginate](#paginate)
 * [Configure](#configure)
 
 ## Installation
@@ -217,6 +218,19 @@ Allows to change resource path for model client.
 ```ruby
 User.root('people').where(name: 'Name')
 # => GET http://localhost:3000/people?name=Name
+```
+
+## Paginate
+
+*`Kaminari` required.*
+
+Yields all pages.
+
+```ruby
+User.where(name: 'Name').paginate { |user| hello(user) }
+# => GET http://localhost:3000/people?name=Name?page=1
+# => GET http://localhost:3000/people?name=Name?page=2
+# => GET http://localhost:3000/people?name=Name?page=3
 ```
 
 ## Configure
