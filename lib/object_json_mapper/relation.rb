@@ -62,6 +62,23 @@ module ObjectJSONMapper
                         .map { |attributes| klass.persist(attributes) }
     end
 
+    # @yield [ObjectJSONMapper::Relation] with next page until last page reached.
+    def paginate
+      i = 1
+
+      loop do
+        chunk = page(i)
+
+        break if chunk.out_of_range?
+
+        yield chunk if block_given?
+
+        break if chunk.last_page?
+
+        i += 1
+      end
+    end
+
     def deep_clone
       clone.tap do |object|
         object.conditions = conditions.clone

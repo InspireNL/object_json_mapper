@@ -37,15 +37,18 @@ module ObjectJSONMapper
       to_key.any?
     end
 
+    def method_missing(method_name, *args, &block)
+      return attributes.fetch(method_name) if respond_to_missing?(method_name)
+      super
+    end
+
+    def respond_to_missing?(method_name, *)
+      attributes.key?(method_name)
+    end
+
     # @param value [Hash]
     def attributes=(value)
       @attributes = HashWithIndifferentAccess.new(value)
-
-      @attributes.each do |method_name, _|
-        define_singleton_method(method_name) do
-          @attributes[method_name]
-        end
-      end
     end
 
     def ==(other)
