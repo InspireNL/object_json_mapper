@@ -4,9 +4,10 @@ module ObjectJSONMapper
       # @param object [ObjectJSONMapper::Base]
       # @return [ObjectJSONMapper::Base]
       def call(object)
-        klass.persist(
-          HTTP.parse_json(object.client[endpoint].get.body)
-        )
+        attributes = object[name]
+        attributes ||= HTTP.parse_json(object.client[endpoint].get.body)
+
+        klass.persist(attributes)
       end
     end
   end
