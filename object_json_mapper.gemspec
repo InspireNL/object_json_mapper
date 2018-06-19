@@ -18,14 +18,16 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'awesome_print', '~> 1.7'
   spec.add_development_dependency 'bundler', '~> 1.12'
+  spec.add_development_dependency 'kaminari', '~> 0.17'
+  spec.add_development_dependency 'pry', '~> 0.10'
+  spec.add_development_dependency 'pry-byebug', '~> 3.4'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'awesome_print', '~> 1.7'
-  spec.add_development_dependency 'pry', '~> 0.10'
+  spec.add_development_dependency 'rspec_junit_formatter'
+  spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'webmock', '~> 2.3'
-  spec.add_development_dependency 'pry-byebug', '~> 3.4'
-  spec.add_development_dependency 'kaminari', '~> 0.17'
 
   spec.add_dependency 'activemodel', '>= 4.2'
   spec.add_dependency 'activesupport', '>= 4.2'
